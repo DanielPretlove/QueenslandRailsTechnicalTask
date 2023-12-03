@@ -30,7 +30,6 @@ namespace QueenslandRailsTechnicalTask.Helpers
         public static List<RouteSequence> AnalyzeCollection(List<RouteSequence> records)
         {
             List<TrainStations> allStations = new List<TrainStations>();
-
             foreach (RouteSequence routeSequence in records)
             {
                 allStations.AddRange(routeSequence.Stations);
@@ -38,6 +37,9 @@ namespace QueenslandRailsTechnicalTask.Helpers
 
             string firstStation = allStations.First(x => x.Stop == true).Name;
             string lastStation = allStations.Last(x => x.Stop == true).Name;
+
+            var firstExpress = records.Where(x => x.Express == true).First().Express == true;
+            var firstExpressStations = records.Where(x => x.Express == true).First().Stations.Any(x => x.Stop == true) == true;
 
             if (records.All(n => n.Express == false))
             {
@@ -56,26 +58,25 @@ namespace QueenslandRailsTechnicalTask.Helpers
 
             // checks if the first express and the second express that returns true and the checks if any stops within the true express
             // station are true for both the first and second true express conditions
-            else if(records.Where(x => x.Express == true).First().Express == true 
-                && records.Where(x => x.Express == true).Skip(1).First().Express == true
-                && records.Where(x => x.Express == true).First().Stations.Any(x => x.Stop == true)
-                && records.Where(x => x.Express == true).Skip(1).First().Stations.Any(x => x.Stop == true))
+            else if (firstExpress == true
+                && records.Where(x => x.Express == true).Skip(1).FirstOrDefault() != null 
+                && firstExpressStations == true 
+                && records.Where(x => x.Express == true).Skip(1).FirstOrDefault().Stations.Any(x => x.Stop == true) != null)
             {
                 Console.WriteLine($"This train runs express from {records.Where(x => x.Express == true).First().Stations.First().Name} " +
                     $"to {records.Where(x => x.Express == true).First().Stations.Last().Name}, stopping only at " +
                     $"{records.Where(x => x.Express == true).First().Stations.Where(x => x.Stop == true).Skip(1).First().Name} then runs express from " +
-                    $"{records.Where(x => x.Express == true).Skip(1).First().Stations.First().Name} to " +
-                    $"{records.Where(x => x.Express == true).Skip(1).First().Stations.Last().Name}");
+                    $"{records.Where(x => x.Express == true).ElementAt(1).Stations.First().Name} to " +
+                    $"{records.Where(x => x.Express == true).ElementAt(1).Stations.Last().Name}");
             }
 
-            else if (records.Where(x => x.Express == true).First().Express == true 
-                && records.Where(x => x.Express == true).First().Stations.Any(x => x.Stop == true))
+            else if (firstExpress == true && firstExpressStations == true && records.Where(x => x.Express == true).First().Stations.Count(x => x.Stop == true) > 2)
             {
                 Console.WriteLine($"This train runs express from {records.Where(x => x.Express == true).First().Stations.First().Name} " +
                     $"to {records.Where(x => x.Express == true).First().Stations.Last().Name} stopping only at" +
                     $" {records.Where(x => x.Express == true).First().Stations.Where(x => x.Stop == true).Skip(1).First().Name}");
             }
-            else if (records.Where(x => x.Express == true).First().Express == true)
+            else if (firstExpress == true)
             {
                 Console.WriteLine($"This train runs express from" +
                     $" {records.Where(x => x.Express == true).First().Stations.First().Name}" +
@@ -84,9 +85,9 @@ namespace QueenslandRailsTechnicalTask.Helpers
 
             else
             {
-                Console.WriteLine();
+                Console.WriteLine("none are the conditions doe not meet the requirements");
             }
-
+           
             return records;
         }
 
