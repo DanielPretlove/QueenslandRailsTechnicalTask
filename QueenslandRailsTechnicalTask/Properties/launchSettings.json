@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "QueenslandRailsTechnicalTask": {
+      "commandName": "Project",
+      "commandLineArgs": "CSV/CabooltureLine.csv",
+      "workingDirectory": "D:\\source\\repos\\QueenslandRails\\QueenslandRailsTechnicalTask\\QueenslandRailsTechnicalTask"
+    }
+  }
+}
