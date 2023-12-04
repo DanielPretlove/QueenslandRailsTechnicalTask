@@ -38,8 +38,8 @@ namespace QueenslandRailsTechnicalTask.Helpers
             string firstStation = allStations.First(x => x.Stop == true).Name;
             string lastStation = allStations.Last(x => x.Stop == true).Name;
 
-            var firstExpress = records.Where(x => x.Express == true).First().Express == true;
-            var firstExpressStations = records.Where(x => x.Express == true).First().Stations.Any(x => x.Stop == true) == true;
+            var firstExpress = records.Where(x => x.Express == true).FirstOrDefault();
+            var secondExpress = records.Where(x => x.Express == true).Skip(1).FirstOrDefault();
 
             if (records.All(n => n.Express == false))
             {
@@ -58,10 +58,10 @@ namespace QueenslandRailsTechnicalTask.Helpers
 
             // checks if the first express and the second express that returns true and the checks if any stops within the true express
             // station are true for both the first and second true express conditions
-            else if (firstExpress == true
-                && records.Where(x => x.Express == true).Skip(1).FirstOrDefault() != null 
-                && firstExpressStations == true 
-                && records.Where(x => x.Express == true).Skip(1).FirstOrDefault().Stations.Any(x => x.Stop == true) != null)
+            else if (firstExpress != null
+                && secondExpress != null
+                && records.Where(x => x.Express == true).FirstOrDefault().Stations.Any(x => x.Stop == true) == true
+                && records.Where(x => x.Express == true).Skip(1).FirstOrDefault().Stations.Any(x => x.Stop == true) == true)
             {
                 Console.WriteLine($"This train runs express from {records.Where(x => x.Express == true).First().Stations.First().Name} " +
                     $"to {records.Where(x => x.Express == true).First().Stations.Last().Name}, stopping only at " +
@@ -70,13 +70,15 @@ namespace QueenslandRailsTechnicalTask.Helpers
                     $"{records.Where(x => x.Express == true).ElementAt(1).Stations.Last().Name}");
             }
 
-            else if (firstExpress == true && firstExpressStations == true && records.Where(x => x.Express == true).First().Stations.Count(x => x.Stop == true) > 2)
+            else if (firstExpress != null 
+                && records.Where(x => x.Express == true).FirstOrDefault().Stations.Any(x => x.Stop == true) == true 
+                && records.Where(x => x.Express == true).First().Stations.Count(x => x.Stop == true) > 2)
             {
                 Console.WriteLine($"This train runs express from {records.Where(x => x.Express == true).First().Stations.First().Name} " +
                     $"to {records.Where(x => x.Express == true).First().Stations.Last().Name} stopping only at" +
                     $" {records.Where(x => x.Express == true).First().Stations.Where(x => x.Stop == true).Skip(1).First().Name}");
             }
-            else if (firstExpress == true)
+            else if (firstExpress != null)
             {
                 Console.WriteLine($"This train runs express from" +
                     $" {records.Where(x => x.Express == true).First().Stations.First().Name}" +
